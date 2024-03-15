@@ -145,9 +145,12 @@ export default class {
       this.counter ++
     }
 
-    bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
-    })
+    const billsToHandle = filteredBills(bills, getStatus(this.index));
+    billsToHandle.forEach((bill) => {
+			$(`#open-bill${bill.id}`).click((e) =>
+				this.handleEditTicket(e, bill, bills)
+			);
+		});
 
     return bills
 
