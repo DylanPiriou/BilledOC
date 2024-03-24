@@ -70,7 +70,45 @@ describe("Given I am connected as an employee", () => {
 	});
 	describe("When I am on NewBill Page, i want to upload but my file has an invalid format", () => {
 		test("Then it should detect change on file input", () => {
-			// LDJEPOJXS
+			window.localStorage.setItem(
+				"user",
+				JSON.stringify({
+					type: "Employee",
+				})
+			);
+
+			document.body.innerHTML = NewBillUI();
+
+			const onNavigate = (pathname) => {
+				document.body.innerHTML = ROUTES({ pathname });
+			};
+			const store = null;
+
+			const newBill = new NewBill({
+				document,
+				onNavigate,
+				store,
+				localStorage,
+			});
+			const handleChangeFile = jest.fn(() => newBill.handleChangeFile);
+			const file = screen.getByTestId("file");
+
+			window.alert = jest.fn();
+
+			file.addEventListener("change", handleChangeFile);
+			fireEvent.change(file, {
+				target: {
+					files: [new File(["file.png"], "file.png", { type: "image/png" })],
+				},
+			});
+
+			jest.spyOn(window, "alert");
+			// expect(alert).not.toHaveBeenCalled();
+
+			expect(handleChangeFile).toHaveBeenCalled();
+			expect(file.files[0].name).toBe("file.png");
+			// expect(newBill.fileName).toBe("file.png");
+			expect(newBill.formData).not.toBe(null);
 		});
 		test("Then, the alert message should be displayed and file cleared", () => {
 			document.body.innerHTML = `
@@ -145,9 +183,6 @@ describe("Given I am connected as an employee", () => {
 				key: "1234",
 			});
 		});
-		test("Then the user should be redirected to Bills page", async () => {
-			// DJEPDOJDS
-		});
 	});
 	describe("When I am on NewBill Page, i want to submit but an error appears", () => {
 		beforeEach(() => {
@@ -220,10 +255,5 @@ describe("Given I am connected as an employee", () => {
 
 			await expect(store.update()).rejects.toEqual(new Error("500"));
 		});
-	});
-	describe("When I am on NewBill Page, i want to update a bill", () => {
-		test("Then the bill should be updated", async () => {
-			// JDJDJDJDDJDJ
-		});
-	});
+	});	
 });
